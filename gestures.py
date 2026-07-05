@@ -1,7 +1,8 @@
+import math
 def thumb_is_open(landmarks):
     thumb_tip = landmarks[4]
     thumb_joint = landmarks[3]
-    if thumb_tip[0]>thumb_joint[0]:
+    if thumb_tip[0]<thumb_joint[0]:
         return True
     return False
 
@@ -30,3 +31,41 @@ def action_detection(fingers):
         return "BRAKE"
     else:
         return "NONE"
+
+center_angle = None
+def hand_calibration(landmarks):
+    global center_angle
+    middle_x=landmarks[12][0]
+    middle_y=landmarks[12][1]
+    wrist_x=landmarks[0][0]
+    wrist_y=landmarks[0][1]
+
+    dx = middle_x-wrist_x
+    dy = middle_y-wrist_y
+
+    center_angle=math.atan2(dy,dx)
+    return center_angle
+
+def steer_value(landmarks):
+    if center_angle is None:
+        return 0
+    else:
+        middle_x=landmarks[12][0]
+        middle_y=landmarks[12][1]
+        wrist_x=landmarks[0][0]
+        wrist_y=landmarks[0][1]
+
+        dx = middle_x-wrist_x
+        dy = middle_y-wrist_y
+
+        angle=math.atan2(dy,dx)
+        steering=angle-center_angle
+
+        #dead zone creation and clamping
+        if steering > -0.05 and steering < 0.05:
+            steering = 0
+        if steering >=1:
+            steering =1
+        if steering <=-1:
+            steering =-1
+        return steering

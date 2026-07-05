@@ -4,3 +4,4 @@ venv
 
 .vscode
 images/Gesture Racing Game Complete Codebase.pdf
+__pycache__
