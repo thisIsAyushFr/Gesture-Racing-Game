@@ -1,4 +1,5 @@
 import math
+import pygame
 class Car:
     def __init__(self):
         self.x = 400
@@ -11,6 +12,9 @@ class Car:
         self.braking_force=500
         self.steering_strength=100
 
+        self.rect = pygame.Rect(0,0,120,60)
+        self.rect.center = (self.x,self.y)
+
     def update(self,dt):
         radian_rotation = math.radians(self.rotation)
         self.speed *=(self.drag**dt) #applied friction
@@ -20,6 +24,7 @@ class Car:
 
         self.x-=dx*dt #it should be + but sprite is reversed so
         self.y-=dy*dt
+        self.rect.center = (self.x,self.y)
 
     def accelerate(self,dt):
         self.speed +=self.acceleration*dt
@@ -34,3 +39,5 @@ class Car:
 
     def steer(self,value,dt):
         self.rotation +=value*self.steering_strength*dt
+
+    

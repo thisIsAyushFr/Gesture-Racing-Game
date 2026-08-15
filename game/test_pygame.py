@@ -17,18 +17,27 @@ width = 800
 height = 600
 
 car = Car()
-obstacle=Obstacle()
+obstacles = [
+    Obstacle(300,-200),
+    Obstacle(600,-500),
+    Obstacle(200,-800),
+    Obstacle(700,-1100),
+    Obstacle(400,-1400)
+]
 
-screen = pygame.display.set_mode((800,600))
+screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+#screen = pygame.display.set_mode((800,600))
 screen_width = screen.get_width()
 screen_height = screen.get_height()
+
+print(screen_width, screen_height)
 pygame.display.set_caption("Game")
 
 car.x = screen_width-300
 car.y = (screen_height-165)/2
 
 car_image = pygame.image.load("images/car1.png")
-resized_car_image = pygame.transform.scale(car_image,(384, 213))
+resized_car_image = pygame.transform.scale(car_image,(150, 80))
 
 tracker = HandTracker()
 camera = cv2.VideoCapture(0)
@@ -62,12 +71,30 @@ while running:
 
 
     car.update(dt)
-    obstacle.update(dt,screen_height)
+
+    if car.rect.left<0:
+        car.x = car.rect.width/2
+        
+    if car.rect.left>screen_width:
+        car.x = screen_width - car.rect.width/2
+
+    for obstacle in obstacles:
+        obstacle.update(dt,screen_height)
+
+    for obstacle in obstacles:
+        if car.rect.colliderect(obstacle.rect):
+            print("COLLISION")
+            car.speed=0
+            obstacle.y=-obstacle.height
+            obstacle.rect.y=obstacle.y
+
     screen.fill((255,255,255))
     rotated_car = pygame.transform.rotate(resized_car_image,-car.rotation)
     car_rect = rotated_car.get_rect(center=(car.x,car.y))
     screen.blit(rotated_car,car_rect.topleft)
-    pygame.draw.rect(screen,(255,0,0),obstacle.rect)
+    pygame.draw.rect(screen,(0,255,0),car.rect,2)
+    for obstacle in obstacles:
+        pygame.draw.rect(screen,(255,0,0),obstacle.rect)
     pygame.display.update()
     
 pygame.quit()
