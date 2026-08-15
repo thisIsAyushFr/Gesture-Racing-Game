@@ -62,7 +62,7 @@ def steer_value(landmarks):
         steering=angle-center_angle
 
         #dead zone creation and clamping
-        if steering > -0.05 and steering < 0.05:
+        if steering > -0.30 and steering < 0.30:
             steering = 0
         if steering >=1:
             steering =1
