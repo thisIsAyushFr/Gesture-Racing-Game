@@ -1,7 +1,22 @@
 hand_detection_full_model.py
 
 venv
+.venv
 
 .vscode
 images/Gesture Racing Game Complete Codebase.pdf
-__pycache__
+
+__pycache__/
+*.pyc
+
+# pip installed packages that ended up inside the project
+Lib/
+Scripts/
+share/
+game/Lib/
+game/Scripts/
+game/share/
+pyvenv.cfg
+
+# VS Code run-selection scratch file
+tempCodeRunnerFile.py

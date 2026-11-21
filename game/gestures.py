@@ -2,8 +2,15 @@ import math
 def thumb_is_open(landmarks):
     thumb_tip = landmarks[4]
     thumb_joint = landmarks[3]
-    if thumb_tip[0]<thumb_joint[0]:
-        return True
+    index_knuckle=landmarks[5]
+    pinky_knuckle=landmarks[17]
+    #thumb side depends on which hand it is
+    if index_knuckle[0]<pinky_knuckle[0]:
+        if thumb_tip[0]<thumb_joint[0]:
+            return True
+    else:
+        if thumb_tip[0]>thumb_joint[0]:
+            return True
     return False
 
 def fingers_up(landmarks):
@@ -64,6 +71,10 @@ def steer_value(landmarks):
         #dead zone creation and clamping
         if steering > -0.30 and steering < 0.30:
             steering = 0
+        elif steering >=0.30:
+            steering=(steering-0.30)/(1-0.30) #starts from 0 at dead zone edge
+        else:
+            steering=(steering+0.30)/(1-0.30)
         if steering >=1:
             steering =1
         if steering <=-1:

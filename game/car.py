@@ -7,7 +7,7 @@ class Car:
         self.speed = 0
         self.rotation = 0
         self.acceleration = 250
-        self.max_speed = 2500
+        self.max_speed = 1200
         self.drag = 0.7
         self.braking_force=500
         self.steering_strength=100

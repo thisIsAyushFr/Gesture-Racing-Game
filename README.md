@@ -1,61 +1,56 @@
 # 🏎️ Gesture Racing Game
 
-Control a racing car using just your hand gestures through your webcam. This project combines computer vision with game development to create a fun, interactive experience where your hand becomes the steering wheel.
+Control a racing car with your hand through your webcam. MediaPipe tracks your hand, Pygame runs the game.
 
 ---
 
-## 🚀 Overview
+## 🎮 Controls
 
-This project uses **MediaPipe Hand Tracking** to detect hand movements and translates them into real-time controls in a racing game built with **Pygame**.
+| Input | Action |
+| ----- | ------ |
+| Open palm (5 fingers) | Accelerate |
+| Fist | Brake |
+| Tilt hand left/right | Steer |
+| `C` | Calibrate (hold your hand in a neutral pose first) |
+| `T` | Switch theme |
+| `V` | Show/hide the camera preview |
+| `R` | Restart after game over |
+| `ESC` | Quit |
 
-Instead of keyboard input:
-
-* Tilt your hand → steer the car
-* Make a fist → brake
-* Show an open palm → accelerate
-
----
-
-## 🎮 Features
-
-* ✋ Real-time hand tracking using webcam
-* 🏎️ Gesture-based car control
-* 🛣️ Basic racing environment with boundaries
-* 🚧 Obstacles for collision interaction
-* 💨 Smooth movement with optional drifting physics
-* ⚡ Lightweight and runs on CPU
+No hand in view means the car brakes.
 
 ---
 
-## 🧠 Gesture Controls
+## ✨ Features
 
-| Gesture              | Action     |
-| -------------------- | ---------- |
-| Tilt Hand Left/Right | Steering   |
-| Fist                 | Brake      |
-| Open Palm            | Accelerate |
+* Real-time hand tracking (MediaPipe Hand Landmarker)
+* Gesture steering with calibration and a dead zone
+* Endless scrolling road: the car wraps from one side to the other
+* Obstacles (barriers and cones) that move with the road, with spacing so the road is never blocked
+* Difficulty ramp: starts with 3 obstacles, adds one every 5 points, up to 10
+* 3 lives, score for every obstacle dodged, game over and restart
+* Top speed cap, speed lines and road speed that follow the car
+* 5 switchable themes: Night City, Desert Day, Grassland, Neon Synthwave, Snow
+* Small webcam preview with hand landmarks
 
 ---
 
 ## 🏗️ Project Structure
 
 ```
-gesture_racing/
-│
-├── main.py                # Entry point
-├── hand_tracking.py       # MediaPipe hand detection
-├── gesture_logic.py       # Gesture interpretation
-│
+Gesture-Racing-Game/
 ├── game/
-│   ├── car.py             # Car behavior
-│   ├── physics.py         # Movement + drift logic
-│   ├── track.py           # Track rendering
-│   └── obstacles.py       # Obstacles system
-│
-├── assets/
-│   ├── car.png
-│   ├── track.png
-│
+│   ├── main.py              # Entry point and game loop
+│   ├── car.py               # Car movement and physics
+│   ├── obstacles.py         # Obstacles
+│   ├── road.py              # Dashes, asphalt, curbs, speed lines
+│   ├── scenery.py           # Themed scrolling background
+│   ├── themes.py            # Theme colours and settings
+│   ├── hand_tracker.py      # MediaPipe hand detection
+│   ├── gestures.py          # Finger and steering logic
+│   └── hand_landmarker.task # MediaPipe model file
+├── images/
+│   └── car1.png
 └── README.md
 ```
 
@@ -63,94 +58,51 @@ gesture_racing/
 
 ## ⚙️ Installation
 
-### 1. Clone the repository
+Use Python 3.13 (pygame has no prebuilt wheel for 3.14 yet).
 
 ```bash
-git clone https://github.com/your-username/gesture-racing-game.git
-cd gesture-racing-game
+py -3.13 -m pip install opencv-python mediapipe pygame numpy
 ```
 
-### 2. Install dependencies
+`game/hand_landmarker.task` must be present. If it is missing, download it:
+
+```
+https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task
+```
+
+---
+
+## ▶️ Running
 
 ```bash
-pip install opencv-python mediapipe pygame numpy
+py -3.13 game/main.py
 ```
 
----
-
-## ▶️ Running the Project
-
-```bash
-python main.py
-```
-
-Make sure your webcam is connected and accessible.
+Connect your webcam, press `C` with your hand in a neutral pose, then play.
 
 ---
 
-## 🧩 How It Works
+## 🧠 How It Works
 
-1. Webcam captures video frames
-2. MediaPipe detects hand landmarks
-3. Gesture logic interprets:
-
-   * Hand angle → steering
-   * Finger states → actions
-4. Game engine updates:
-
-   * Car speed
-   * Direction
-   * Position
-5. Frame is rendered using Pygame
+1. The webcam frame goes to the MediaPipe hand landmarker.
+2. `gestures.py` counts raised fingers (accelerate/brake) and measures the wrist-to-middle-finger angle against the calibrated angle (steering).
+3. `main.py` applies this to the car, scrolls the road, scenery and obstacles at a speed based on the car's speed, and checks pixel-perfect collisions.
 
 ---
 
-## 💨 Physics System
+## 🚧 Ideas for Later
 
-* Acceleration increases speed gradually
-* Braking reduces speed smoothly
-* Steering adjusts car angle
-* Optional drifting adds inertia for realistic movement
-
----
-
-## 🚧 Future Improvements
-
-* 🏁 Lap system and scoring
-* 🎵 Sound effects and background music
-* 🌍 Multiple tracks and difficulty levels
-* 🧠 AI opponents
-* 📊 Performance optimization (CPU vs GPU experiments)
-* 🎮 Menu and UI enhancements
-
----
-
-## 🧪 Use Cases
-
-* Computer vision + game dev project
-* Human-computer interaction demo
-* Mini research project (gesture-based control systems)
-* Portfolio project for internships/research
+* High score saved to a file
+* Pause and a start countdown
+* Sound effects and music
+* Gesture smoothing, crash effects, speedometer
 
 ---
 
 ## ⚠️ Notes
 
-* Works best in good lighting conditions
-* Keep hand clearly visible in frame
-* Avoid fast erratic movements for better tracking
-
----
-
-## 🤝 Contributing
-
-Pull requests are welcome. For major changes, open an issue first to discuss what you'd like to improve.
-
----
-
-## 📜 License
-
-This project is open-source and available under the MIT License.
+* Works best in good lighting with your hand clearly visible
+* Avoid fast erratic movements
 
 ---
 
@@ -158,9 +110,3 @@ This project is open-source and available under the MIT License.
 
 Ayush Sharma
 B.E. CSE (AI/ML)
-
----
-
-## 🌟 If you like this project
-
-Give it a ⭐ on GitHub and share it with others!
